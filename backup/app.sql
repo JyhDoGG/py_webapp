@@ -1,5 +1,3 @@
---app.sql_0716
-
 drop database if exists blog_app;
 
 create database blog_app;
@@ -18,8 +16,8 @@ create table users (
     `created_at` real not null,
     unique key `idx_email` (`email`),
     key `idx_created_at` (`created_at`),
-    primary key (`id`),
-)engine=innodb default charset=utf-8;
+    primary key (`id`)
+) engine=innodb default charset=utf8;
 
 create table blogs (
     `id` varchar(50) not null,
@@ -31,8 +29,8 @@ create table blogs (
     `content` mediumtext not null,
     `created_at` real not null,
     key `idx_created_at` (`created_at`),
-    primary key (`id`),
-)engine=innodb default charset=utf-8;
+    primary key (`id`)
+) engine=innodb default charset=utf8;
 
 create table comments (
     `id` varchar(50) not null,
@@ -43,5 +41,5 @@ create table comments (
     `content` mediumtext not null,
     `created_at` real not null,
     key `idx_created_at` (`created_at`),
-    primary key (`id`),
-)engine=innodb default charset=utf-8;
+    primary key (`id`)
+) engine=innodb default charset=utf8;
