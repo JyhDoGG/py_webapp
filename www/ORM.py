@@ -194,19 +194,19 @@ class Model(dict,metaclass=ModelMetaClass):
         args.append(self.getValueOrDefault(self.__primary_key__))
         rows=await execute(self.__insert__,args)
         if rows !=1:
-            logging.warn('failed to insert record: affected rows: %s' % rows)
+            logging.warning('failed to insert record: affected rows: %s' % rows)
 
     async def update(self):
         args=list(map(self.getValues,self.__fields__))
         args.append(self.getValues(self.__primary_key__))
         rows=await execute(self.__update__,args)
         if rows != 1:
-            raise logging.warn('failed to update by primary key: affected row: %s' % rows)
+            raise logging.warning('failed to update by primary key: affected row: %s' % rows)
 
     async def remove(self):
         args=[self.getValues(self.__primary_key__)]
         rows=await execute(self.__delete__,args)
         if rows!=1:
-            logging.warn('failed to remove by primary key: affected rows: %s' % rows)
+            logging.warning('failed to remove by primary key: affected rows: %s' % rows)
 
 
