@@ -4,7 +4,7 @@ create database blog_app;
 
 use blog_app;
 
-grant select,insert,update,delete on blog_app.* to 'blogadim'@'localhost' identified by 'jyh001';
+grant select,insert,update,delete on blog_app.* to 'blogadmin'@'localhost' identified by 'jyh001';
 
 create table users (
     `id` varchar(50) not null,

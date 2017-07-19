@@ -12,7 +12,7 @@ async def create_pool(loop,**kw):
     global __pool
     __pool=await aiomysql.create_pool(
         host=kw.get('host','localhost'),
-        port=kw.get('port','3306'),
+        port=kw.get('port',3306),
         user=kw['user'],
         password=kw['password'],
         db=kw['db'],
@@ -36,16 +36,24 @@ async def select(sql,args,size=None):
         logging.info('rows returned:%s' % len(rs))
         return rs
 
-async def execute(sql,args):
-    log(sql,args)
+async def execute(sql, args, autocommit=True):
+    log(sql)
     global __pool
-    async with __pool.get() as coon:
+    async with __pool.get() as conn:
+        if not autocommit:
+            await conn.begin()
         try:
-            async with coon.cursor(aiomysql.DictCursor) as cur:
-                await cur.execute(sql.replace('?','%s',args))
-                affected=cur.rowcount
+            async with conn.cursor(aiomysql.DictCursor) as cur:
+                await cur.execute(sql.replace('?', '%s'), args)
+                affected = cur.rowcount
+            if not autocommit:
+                await conn.commit()
         except BaseException as e:
+            if not autocommit:
+                await conn.rollback()
             raise
+        finally:
+            conn.close()
         return affected
 
 def create_args_string(num):
@@ -69,7 +77,7 @@ class StringField(Field):
         super().__init__(name,ddl,primary_key,default)
 
 class BooleanField(Field):
-    def __init__(self,name=None,default=None):
+    def __init__(self,name=None,default=False):
         super().__init__(name,'boolean',False,default)
 
 class IntegerField(Field):
@@ -142,7 +150,7 @@ class Model(dict,metaclass=ModelMetaClass):
             if field.default is not None:
                 value=field.default() if callable(field.default) else field.default
                 logging.debug('using default value for %s:%s' % (key,str(value)))
-                setattr(self,key,vlaue)
+                setattr(self,key,value)
         return value
 
     @classmethod

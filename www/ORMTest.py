@@ -2,14 +2,16 @@
 #coding=utf-8
 
 import ORM
+import asyncio
 from models import User, Blog, Comment
 
-def test():
-    yield from ORM.create_pool(user='blogadmin', password='jyh001', database='blog_app')
+async def test(loop):
+    await ORM.create_pool(loop=loop,user='blogadmin', password='jyh001', db='blog_app')
 
-    u = User(name='Test', email='test@example.com', passwd='1234567890', image='about:blank')
+    u = User(name='Test3', email='test3@example.com', passwd='12345678903', image='about:blank')
 
-    yield from u.save()
+    await u.save()
 
-for x in test():
-    pass
+loop=asyncio.get_event_loop()
+loop.run_until_complete(test(loop))
+loop.close()
